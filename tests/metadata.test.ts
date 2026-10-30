@@ -9,11 +9,11 @@ const PHRASE = "job application tracker mcp";
 
 describe("package metadata", () => {
   it("uses the exact name, version, bin and mcpName", () => {
-    expect(pkg.name).toBe("job-application-tracker-mcp");
+    expect(pkg.name).toBe("job-tracker-student-mcp");
     expect(pkg.version).toMatch(/^\d+\.\d+\.\d+/);
     expect(server.version).toBe(pkg.version);
-    expect(pkg.bin).toEqual({ "job-application-tracker-mcp": "build/src/index.js" });
-    expect(pkg.mcpName).toBe("io.github.AnonymousOnyx22/job-application-tracker-mcp");
+    expect(pkg.bin).toEqual({ "job-tracker-student-mcp": "build/src/index.js" });
+    expect(pkg.mcpName).toBe("io.github.AnonymousOnyx22/job-tracker-student-mcp");
   });
 
   it("leads the description and keywords with the phrase job application tracker mcp", () => {

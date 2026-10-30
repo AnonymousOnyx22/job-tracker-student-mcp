@@ -36,7 +36,7 @@ export interface UpcomingItem {
 
 /** Where the applications are saved, JOB_TRACKER_FILE if it is set. */
 export function defaultPath(): string {
-  return process.env.JOB_TRACKER_FILE || join(homedir(), ".job-application-tracker-mcp", "applications.json");
+  return process.env.JOB_TRACKER_FILE || join(homedir(), ".job-tracker-student-mcp", "applications.json");
 }
 
 /** The saved applications, kept in one JSON file on this computer. */

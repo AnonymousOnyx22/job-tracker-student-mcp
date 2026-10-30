@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { name: string };
 
-const PACKAGE = "job-application-tracker-mcp";
+const PACKAGE = "job-tracker-student-mcp";
 const SERVER = "job-tracker";
 
 /** The apps the README gives an install config for. */

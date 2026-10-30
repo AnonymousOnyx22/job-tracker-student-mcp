@@ -1,11 +1,11 @@
-# job-application-tracker-mcp
+# job-tracker-student-mcp
 
 > Job application tracker MCP server. Track internships, jobs, interviews and deadlines offline with reminders and status updates. Works offline, no account. Free and open source, works with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf.
 
 ## Setup
-- Run with npx -y job-application-tracker-mcp
+- Run with npx -y job-tracker-student-mcp
 - Works offline, no account. No API keys, no passwords and no network calls.
-- Applications are saved in one JSON file at ~/.job-application-tracker-mcp/applications.json. Set the JOB_TRACKER_FILE environment variable to use another path.
+- Applications are saved in one JSON file at ~/.job-tracker-student-mcp/applications.json. Set the JOB_TRACKER_FILE environment variable to use another path.
 - add_application and update_status write to that file. list_upcoming and export_report only read it.
 
 ## Stages and dates
@@ -68,5 +68,5 @@ No. An MCP server only answers when it is asked. list_upcoming gives the reminde
 No. The server reads and writes one local JSON file and makes no network calls.
 
 ## Links
-- npm: https://www.npmjs.com/package/job-application-tracker-mcp
-- GitHub: https://github.com/AnonymousOnyx22/job-application-tracker-mcp
+- npm: https://www.npmjs.com/package/job-tracker-student-mcp
+- GitHub: https://github.com/AnonymousOnyx22/job-tracker-student-mcp

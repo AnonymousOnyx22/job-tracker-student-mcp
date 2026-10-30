@@ -1,11 +1,11 @@
 {
-  "name": "job-application-tracker-mcp",
+  "name": "job-tracker-student-mcp",
   "version": "0.1.0",
   "description": "Job application tracker MCP server that works offline. Track internships, jobs, interviews and deadlines, see what is coming up, and export to CSV or Markdown. No account and no API keys.",
   "type": "module",
   "main": "build/src/index.js",
   "bin": {
-    "job-application-tracker-mcp": "build/src/index.js"
+    "job-tracker-student-mcp": "build/src/index.js"
   },
   "files": [
     "build/src",
@@ -54,19 +54,19 @@
     "mcp",
     "mcp server",
     "model-context-protocol",
-    "job-application-tracker-mcp"
+    "job-tracker-student-mcp"
   ],
   "author": "AnonymousOnyx22",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AnonymousOnyx22/job-application-tracker-mcp.git"
+    "url": "git+https://github.com/AnonymousOnyx22/job-tracker-student-mcp.git"
   },
-  "homepage": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp#readme",
+  "homepage": "https://github.com/AnonymousOnyx22/job-tracker-student-mcp#readme",
   "bugs": {
-    "url": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp/issues"
+    "url": "https://github.com/AnonymousOnyx22/job-tracker-student-mcp/issues"
   },
-  "mcpName": "io.github.AnonymousOnyx22/job-application-tracker-mcp",
+  "mcpName": "io.github.AnonymousOnyx22/job-tracker-student-mcp",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
     "zod": "^4.6.7"

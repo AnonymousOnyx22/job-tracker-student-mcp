@@ -1,16 +1,16 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.AnonymousOnyx22/job-application-tracker-mcp",
+  "name": "io.github.AnonymousOnyx22/job-tracker-student-mcp",
   "description": "Job application tracker MCP server. Track jobs, interviews and deadlines offline.",
   "repository": {
-    "url": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp",
+    "url": "https://github.com/AnonymousOnyx22/job-tracker-student-mcp",
     "source": "github"
   },
   "version": "0.1.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "job-application-tracker-mcp",
+      "identifier": "job-tracker-student-mcp",
       "version": "0.1.0",
       "transport": {
         "type": "stdio"

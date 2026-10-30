@@ -24,7 +24,7 @@ describe("package-lock.json", () => {
   const root = lock.packages[""];
 
   it("is for this package", () => {
-    expect(lock.name).toBe("job-application-tracker-mcp");
+    expect(lock.name).toBe("job-tracker-student-mcp");
     expect(lock.version).toBe(pkg.version);
   });
 

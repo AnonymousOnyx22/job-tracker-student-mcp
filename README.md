@@ -1,13 +1,13 @@
 # Job Application Tracker MCP
 
-[![npm](https://img.shields.io/npm/v/job-application-tracker-mcp.svg)](https://www.npmjs.com/package/job-application-tracker-mcp)
+[![npm](https://img.shields.io/npm/v/job-tracker-student-mcp.svg)](https://www.npmjs.com/package/job-tracker-student-mcp)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Star on GitHub](https://img.shields.io/github/stars/AnonymousOnyx22/job-application-tracker-mcp.svg)](https://github.com/AnonymousOnyx22/job-application-tracker-mcp)
+[![Star on GitHub](https://img.shields.io/github/stars/AnonymousOnyx22/job-tracker-student-mcp.svg)](https://github.com/AnonymousOnyx22/job-tracker-student-mcp)
 
 Too many job applications spread across tabs and notes. Track them in one place offline.
 
 ```bash
-npx -y job-application-tracker-mcp
+npx -y job-tracker-student-mcp
 ```
 
 **Try these prompts:**
@@ -16,14 +16,14 @@ npx -y job-application-tracker-mcp
 2. "Move application 1 to interview on 2026-11-20 at 14:30."
 3. "What deadlines and interviews do I have in the next two weeks?"
 
-A free, open source [MCP](https://modelcontextprotocol.io) server named `job-application-tracker-mcp` on npm. Track internships, jobs, interviews and deadlines, see what is coming up, and export your list as CSV or Markdown. Runs on your computer with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf. No internet, no login, no API keys. Your applications are saved in one JSON file that you can open, back up or delete. Free forever.
+A free, open source [MCP](https://modelcontextprotocol.io) server named `job-tracker-student-mcp` on npm. Track internships, jobs, interviews and deadlines, see what is coming up, and export your list as CSV or Markdown. Runs on your computer with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf. No internet, no login, no API keys. Your applications are saved in one JSON file that you can open, back up or delete. Free forever.
 
 ## Install
 
 Run it straight from npm with `npx`. You need Node.js 20 or newer, see [Node version](#node-version) for the details. There is nothing else to install and no account to make.
 
 ```bash
-npx -y job-application-tracker-mcp
+npx -y job-tracker-student-mcp
 ```
 
 Add it to your app's MCP config so the app can start it for you. Every app reads its config from its own file, so pick yours:
@@ -45,7 +45,7 @@ Add this to `claude_desktop_config.json`:
   "mcpServers": {
     "job-tracker": {
       "command": "npx",
-      "args": ["-y", "job-application-tracker-mcp"]
+      "args": ["-y", "job-tracker-student-mcp"]
     }
   }
 }
@@ -58,7 +58,7 @@ Restart Claude Desktop after you save the file.
 Run this in a terminal:
 
 ```bash
-claude mcp add job-tracker -- npx -y job-application-tracker-mcp
+claude mcp add job-tracker -- npx -y job-tracker-student-mcp
 ```
 
 ### Cursor
@@ -71,7 +71,7 @@ Cursor reads `.cursor/mcp.json` from the project folder, or `~/.cursor/mcp.json`
     "job-tracker": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "job-application-tracker-mcp"]
+      "args": ["-y", "job-tracker-student-mcp"]
     }
   }
 }
@@ -89,7 +89,7 @@ Put this in `.vscode/mcp.json` in your project folder, or in the `mcp.json` file
     "job-tracker": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "job-application-tracker-mcp"]
+      "args": ["-y", "job-tracker-student-mcp"]
     }
   }
 }
@@ -106,7 +106,7 @@ Add this to `~/.codeium/windsurf/mcp_config.json`:
   "mcpServers": {
     "job-tracker": {
       "command": "npx",
-      "args": ["-y", "job-application-tracker-mcp"]
+      "args": ["-y", "job-tracker-student-mcp"]
     }
   }
 }
@@ -157,14 +157,14 @@ Dates are written as YYYY-MM-DD. An interview can also have a time, written as Y
 
 ## Where your data lives
 
-Applications are saved in `~/.job-application-tracker-mcp/applications.json`. Set the `JOB_TRACKER_FILE` environment variable to use another path. Add it in the `env` part of your MCP config:
+Applications are saved in `~/.job-tracker-student-mcp/applications.json`. Set the `JOB_TRACKER_FILE` environment variable to use another path. Add it in the `env` part of your MCP config:
 
 ```json
 {
   "mcpServers": {
     "job-tracker": {
       "command": "npx",
-      "args": ["-y", "job-application-tracker-mcp"],
+      "args": ["-y", "job-tracker-student-mcp"],
       "env": { "JOB_TRACKER_FILE": "C:\\Users\\you\\Documents\\applications.json" }
     }
   }
@@ -193,7 +193,7 @@ The server makes no network calls and has no API keys, passwords or accounts. It
 
 ## Troubleshooting
 
-If `npx -y job-application-tracker-mcp` fails or hangs:
+If `npx -y job-tracker-student-mcp` fails or hangs:
 
 - Check your Node.js version with `node --version`. The server needs Node.js 20 or newer, see [Node version](#node-version).
 - Delete the folder where npx keeps its downloads, then try again. On Windows it is `%LocalAppData%\npm-cache\_npx`, and on macOS and Linux it is `~/.npm/_npx`.
