@@ -1,7 +1,7 @@
 {
   "name": "job-application-tracker-mcp",
   "version": "0.1.0",
-  "description": "Job application tracker MCP server. Track internships, jobs, interviews and deadlines offline with reminders and status updates. Export your applications as CSV or Markdown. No account, no network keys.",
+  "description": "Job application tracker MCP server that works offline. Track internships, jobs, interviews and deadlines with reminders and status updates, and export to CSV or Markdown. No account and no API keys.",
   "type": "module",
   "main": "build/src/index.js",
   "bin": {
@@ -35,6 +35,10 @@
     "job tracker",
     "application tracker",
     "internship tracker",
+    "internships",
+    "interviews",
+    "deadlines",
+    "no account",
     "job search",
     "job hunt",
     "interview tracker",
