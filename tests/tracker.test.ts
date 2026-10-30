@@ -117,6 +117,47 @@ describe("update_status", () => {
   });
 });
 
+describe("update_application", () => {
+  beforeEach(async () => {
+    await add({ company: "Shopify", role: "Software Intern", deadline: "2026-11-15", notes: "old note", source: "LinkedIn" });
+  });
+
+  it("updates only the fields that are passed", async () => {
+    const out = await run(store, "update_application", { id: 1, company: "  Stripe  ", deadline: "2026-12-01" });
+    expect(out.text).toBe("Updated #1 Software Intern at Stripe.");
+    expect(out.structured.application).toMatchObject({ id: 1, company: "Stripe", role: "Software Intern", deadline: "2026-12-01", notes: "old note" });
+  });
+
+  it("replaces notes and updates role", async () => {
+    const out = await run(store, "update_application", { id: 1, role: "Backend Intern", notes: "new note" });
+    expect(store.list()[0]).toMatchObject({ role: "Backend Intern", notes: "new note" });
+    expect(out.structured.application).toMatchObject({ role: "Backend Intern", notes: "new note" });
+  });
+
+  it("clears the deadline with an empty string", async () => {
+    await run(store, "update_application", { id: 1, deadline: "" });
+    expect(store.list()[0].deadline).toBeNull();
+  });
+
+  it("rejects a bad deadline and changes nothing", async () => {
+    await expect(run(store, "update_application", { id: 1, deadline: "Nov 15" })).rejects.toThrow(/YYYY-MM-DD/);
+    expect(store.list()[0].deadline).toBe("2026-11-15");
+  });
+
+  it("rejects a bad deadline that is not a real date", async () => {
+    await expect(run(store, "update_application", { id: 1, deadline: "2026-02-30" })).rejects.toThrow(/not a real date/);
+    expect(store.list()[0].deadline).toBe("2026-11-15");
+  });
+
+  it("names the problem for an unknown id", async () => {
+    await expect(run(store, "update_application", { id: 99, company: "X" })).rejects.toThrow("There is no application with id 99");
+  });
+
+  it("rejects an empty role string", async () => {
+    await expect(run(store, "update_application", { id: 1, role: "" })).rejects.toThrow();
+  });
+});
+
 describe("list_upcoming", () => {
   const TODAY = "2026-11-10";
   const ids = (out: { structured: Record<string, unknown> }) => (out.structured.items as { id: number }[]).map((i) => i.id);
