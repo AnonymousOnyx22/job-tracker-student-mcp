@@ -165,6 +165,14 @@ Applications are saved in `~/.job-application-tracker-mcp/applications.json`. Se
 }
 ```
 
+## Comparison
+
+This tracker is built for job applications. Some servers focus on course or learning management systems, and some are general task trackers. 
+
+Compared with course focused servers, this one works offline with no login to a learning system and no keys. It is job specific, with statuses for applied, interview, offer and rejected, and it tracks deadlines and interview dates with reminders.
+
+Compared with generic task MCP servers, it is focused on job applications rather than general todos. It keeps applications in a simple local JSON file, has read only and write tools for this specific workflow, and can export as CSV or Markdown. Everything runs locally with no account or network calls.
+
 ## Privacy
 
 The server makes no network calls and has no API keys, passwords or accounts. It reads and writes the one JSON file above and nothing else. There is no telemetry. What you tell the assistant in a chat is handled by the app you use, not by this server.
