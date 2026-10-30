@@ -110,6 +110,39 @@ export const tools: ToolDef<Api>[] = [
     },
   },
   {
+    name: "update_application",
+    title: "Update application",
+    readOnly: false,
+    description:
+      "Update the deadline, notes, role or company of an existing application. " +
+      "Inputs: id of the application (from add_application or export_report), and any of company, role, deadline as YYYY-MM-DD and notes. Only the fields you pass are changed; the rest stay the same. " +
+      "Pass an empty deadline to clear it. " +
+      'Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."',
+    inputSchema: {
+      id: z.number().int().positive().describe("The id of the application."),
+      company: z.string().min(1).optional().describe("New company name."),
+      role: z.string().min(1).optional().describe("New role title."),
+      deadline: z.string().optional().describe("New deadline as YYYY-MM-DD, or an empty string to clear it."),
+      notes: z.string().optional().describe("New notes, replacing the old ones."),
+    },
+    outputSchema: { application: appFields.describe("The application after the change.") },
+    run: async (args, store) => {
+      const apps = store.list();
+      const app = apps.find((a) => a.id === args.id);
+      if (!app) throw new Error(`There is no application with id ${args.id}. Use export_report to see the ids.`);
+      if (args.company !== undefined) app.company = args.company.trim();
+      if (args.role !== undefined) app.role = args.role.trim();
+      if (args.deadline !== undefined) {
+        const d = args.deadline.trim();
+        app.deadline = d ? checkDeadline(d) : null;
+      }
+      if (args.notes !== undefined) app.notes = clean(args.notes);
+      app.updated = todayOr();
+      store.save(apps);
+      return { text: `Updated ${brief(app)}.`, structured: { application: app } };
+    },
+  },
+  {
     name: "list_upcoming",
     title: "List upcoming",
     readOnly: true,

@@ -144,12 +144,13 @@ More things you can ask:
 
 ## Tools
 
-There are four tools. `list_upcoming` and `export_report` are read only. `add_application` and `update_status` write to the local JSON file and nothing else.
+There are five tools. `list_upcoming` and `export_report` are read only. `add_application`, `update_application` and `update_status` write to the local JSON file and nothing else.
 
 | Tool | What it does | Parameters | Example prompt |
 | --- | --- | --- | --- |
 | `add_application` | Add a job or internship with company, role, deadline and source. | `company`, `role`, `deadline`, `source`, `type`, `status`, `notes` | "Add a Software Intern role at Shopify with a deadline of 2026-11-15, found on LinkedIn." |
 | `update_status` | Move an application between applied, interview, offer and rejected. | `id`, `status`, `interview_date`, `note` | "Move application 1 to interview on 2026-11-20 at 14:30." |
+| `update_application` | Update the deadline, notes, role or company of an existing application. | `id`, `company`, `role`, `deadline`, `notes` | "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral." |
 | `list_upcoming` | Show upcoming deadlines and interviews sorted by date, with reminders. | `days`, `include_overdue`, `today` | "What deadlines and interviews do I have in the next two weeks?" |
 | `export_report` | Export applications as CSV or Markdown. | `format`, `status` | "Export all my applications as a CSV." |
 

@@ -40,6 +40,18 @@ Example call: `{"name":"update_status","arguments":{"id":1,"status":"interview",
 Output: One sentence saying the application moved from one stage to another, with the interview date when there is one.
 Structured output: previous_status, and application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
+### update_application
+Update the deadline, notes, role or company of an existing application. Inputs: id of the application (from add_application or export_report), and any of company, role, deadline as YYYY-MM-DD and notes. Only the fields you pass are changed; the rest stay the same. Pass an empty deadline to clear it. Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."
+Parameters: id, company, role, deadline, notes.
+- id: The id of the application. Required.
+- company: New company name.
+- role: New role title.
+- deadline: New deadline as YYYY-MM-DD, or an empty string to clear it.
+- notes: New notes, replacing the old ones.
+Example call: `{"name":"update_application","arguments":{"id":1,"deadline":"2026-11-20","notes":"Referred by a friend"}}`
+Output: One sentence naming the updated application.
+Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
+
 ### list_upcoming
 Show upcoming deadlines and interviews sorted by date, with a reminder for each one. Deadlines come from applications still in the applied stage, and interviews come from applications in the interview stage that have an interview_date. Rejected applications and offers are left out. Inputs: optional days, how far ahead to look (default 14), include_overdue (default true) to also show deadlines that already passed, and an optional today as YYYY-MM-DD to ask as if it were another day. Example prompt: "What deadlines and interviews do I have in the next two weeks?"
 Parameters: days, include_overdue, today.
