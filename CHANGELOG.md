@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added `update_application` to change the deadline, notes, role or company of an existing application.
+
 ## 0.1.0
 
 - First version of the job application tracker with add_application, update_status, list_upcoming and export_report.
