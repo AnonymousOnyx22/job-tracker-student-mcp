@@ -16,7 +16,7 @@ npx -y job-tracker-student-mcp
 2. "Move application 1 to interview on 2026-11-20 at 14:30."
 3. "What deadlines and interviews do I have in the next two weeks?"
 
-A free, open source [MCP](https://modelcontextprotocol.io) server named `job-tracker-student-mcp` on npm. Track internships, jobs, interviews and deadlines, see what is coming up, and export your list as CSV or Markdown. Runs on your computer with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf. No internet, no login, no API keys. Your applications are saved in one JSON file that you can open, back up or delete. Free forever.
+A free, open source [MCP](https://modelcontextprotocol.io) server named `job-tracker-student-mcp` on npm. Track internships, jobs, interviews and deadlines, see what is coming up, and export your list as CSV or Markdown. Runs on your computer with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf. No internet, no login, no API keys. Your applications are saved in one JSON file that you can open, back up or delete.
 
 ## Install
 
@@ -173,7 +173,7 @@ Applications are saved in `~/.job-tracker-student-mcp/applications.json`. Set th
 
 ## Comparison
 
-This tracker is built for job applications. Some servers focus on course or learning management systems, and some are general task trackers. 
+This tracker is built for job applications. Some servers focus on course or learning management systems, and some are general task trackers.
 
 Compared with course focused servers, this one works offline with no login to a learning system and no keys. It is job specific, with statuses for applied, interview, offer and rejected, and it tracks deadlines and interview dates with reminders.
 
