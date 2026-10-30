@@ -127,7 +127,7 @@ describe("the wording of the docs", () => {
   });
 
   it("does not mention ChatGPT or leftovers of the old project", () => {
-    for (const [name, text] of Object.entries(files)) expect(text, name).not.toMatch(/chatgpt|openai|codex|gpa/i);
+    for (const [name, text] of Object.entries(files)) expect(text.replace(/\n## More free student MCP servers[\s\S]*?(?=\n## |$)/, ""), name).not.toMatch(/chatgpt|openai|codex|gpa/i); // the sibling servers table names the other servers on purpose
   });
 
   it("names only apps that run a local MCP server", () => {
