@@ -4,13 +4,19 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Star on GitHub](https://img.shields.io/github/stars/AnonymousOnyx22/job-application-tracker-mcp.svg)](https://github.com/AnonymousOnyx22/job-application-tracker-mcp)
 
-A job application tracker MCP server that works offline. Track internships, jobs, interviews and deadlines, see what is coming up, and export your list as CSV or Markdown. No account needed.
+Too many job applications spread across tabs and notes. Track them in one place offline.
 
-Job Application Tracker MCP is a free, open source [MCP](https://modelcontextprotocol.io) server, named `job-application-tracker-mcp` on npm. Add an application, move it from applied to interview to offer or rejected, see what is coming up, and export the whole list to share.
+```bash
+npx -y job-application-tracker-mcp
+```
 
-Use it with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf. It runs on your computer, needs no internet, no login and no API keys. Your applications are saved in one JSON file that you can open, back up or delete.
+**Try these prompts:**
 
-Free forever. No account and no subscription.
+1. "Add a Software Intern role at Shopify with a deadline of 2026-11-15, found on LinkedIn."
+2. "Move application 1 to interview on 2026-11-20 at 14:30."
+3. "What deadlines and interviews do I have in the next two weeks?"
+
+A free, open source [MCP](https://modelcontextprotocol.io) server named `job-application-tracker-mcp` on npm. Track internships, jobs, interviews and deadlines, see what is coming up, and export your list as CSV or Markdown. Runs on your computer with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf. No internet, no login, no API keys. Your applications are saved in one JSON file that you can open, back up or delete. Free forever.
 
 ## Install
 
