@@ -1,0 +1,14 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "job-application-tracker-mcp",
+  "description": "Job application tracker MCP server. Track internships, jobs, interviews and deadlines offline with reminders and status updates, and export applications as CSV or Markdown.",
+  "repository": {
+    "url": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp",
+    "source": "github"
+  },
+  "maintainers": [
+    "AnonymousOnyx22"
+  ],
+  "homepage": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp",
+  "version": "0.1.0"
+}

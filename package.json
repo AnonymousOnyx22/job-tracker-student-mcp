@@ -1,0 +1,75 @@
+{
+  "name": "job-application-tracker-mcp",
+  "version": "0.1.0",
+  "description": "Job application tracker MCP server. Track internships, jobs, interviews and deadlines offline with reminders and status updates. Export your applications as CSV or Markdown. No account, no network keys.",
+  "type": "module",
+  "main": "build/src/index.js",
+  "bin": {
+    "job-application-tracker-mcp": "build/src/index.js"
+  },
+  "files": [
+    "build/src",
+    "README.md",
+    "llms.txt",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^22.12.0 || ^24.0.0 || >=26.0.0"
+    }
+  },
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/src/index.js', 0o755)\"",
+    "test": "vitest run",
+    "start": "node build/src/index.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "job application tracker mcp",
+    "job application tracker",
+    "job tracker",
+    "application tracker",
+    "internship tracker",
+    "job search",
+    "job hunt",
+    "interview tracker",
+    "interview scheduler",
+    "deadline reminders",
+    "application deadlines",
+    "application status",
+    "csv export",
+    "markdown report",
+    "career",
+    "offline",
+    "local first",
+    "mcp",
+    "mcp server",
+    "model-context-protocol",
+    "job-application-tracker-mcp"
+  ],
+  "author": "AnonymousOnyx22",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnonymousOnyx22/job-application-tracker-mcp.git"
+  },
+  "homepage": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/AnonymousOnyx22/job-application-tracker-mcp/issues"
+  },
+  "mcpName": "io.github.AnonymousOnyx22/job-application-tracker-mcp",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

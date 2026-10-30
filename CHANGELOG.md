@@ -1,0 +1,7 @@
+# Changelog
+
+## 0.1.0
+
+- First version of the job application tracker with add_application, update_status, list_upcoming and export_report.
+- Applications are saved in one local JSON file, and JOB_TRACKER_FILE sets a different path if you want one.
+- Reminders show up in list_upcoming as overdue, due today or due soon, with the number of days left.
