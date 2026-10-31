@@ -4,6 +4,7 @@
 
 - Added `delete_application` to remove a duplicate or mistaken application by id.
 - Added `list_applications` to list applications with optional status and company filters to see ids without exporting a full report.
+- Added an optional `query` to `list_applications` that searches role, notes and source text, for example referral or LinkedIn.
 - Added `update_application` to change the deadline, notes, role or company of an existing application.
 
 ## 0.1.0

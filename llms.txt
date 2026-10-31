@@ -61,10 +61,11 @@ Output: One sentence naming the deleted application.
 Structured output: deleted with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### list_applications
-List applications with optional status and company filters. Inputs: optional status to filter by stage, and an optional company substring to match (case insensitive). Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. Example prompt: "List all applications."
-Parameters: status, company.
+List applications with optional status and company filters, and an optional text query. Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), and an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn. Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. Example prompt: "List all applications."
+Parameters: status, company, query.
 - status: Only list applications in this stage.
 - company: Only list applications whose company name contains this text (case insensitive).
+- query: Only list applications whose role, notes or source contains this text (case insensitive).
 Example call: `{"name":"list_applications","arguments":{}}`
 Output: A sentence with the number of applications found, then a short list of id, role and company with status.
 Structured output: count and applications with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.

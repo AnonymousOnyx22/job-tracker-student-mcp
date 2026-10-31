@@ -342,6 +342,18 @@ describe("list_applications", () => {
     expect(out.text).toContain("None.");
   });
 
+  it("searches role, notes and source with a text query", async () => {
+    await add({ company: "Acme", role: "Designer", source: "LinkedIn", notes: "Got a Referral from Sam" });
+    const byNotes = await run(store, "list_applications", { query: " referral " });
+    expect((byNotes.structured.applications as { id: number }[]).map((a) => a.id)).toEqual([4]);
+    const bySource = await run(store, "list_applications", { query: "linkedin" });
+    expect(bySource.structured.count).toBe(1);
+    const byRole = await run(store, "list_applications", { query: "analyst", status: "offer" });
+    expect(byRole.structured.count).toBe(1);
+    const none = await run(store, "list_applications", { query: "nothing like this" });
+    expect(none.structured.count).toBe(0);
+  });
+
   it("does not change the saved file", async () => {
     const before = readFileSync(store.path, "utf8");
     await run(store, "list_applications", {});

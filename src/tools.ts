@@ -167,13 +167,14 @@ export const tools: ToolDef<Api>[] = [
     title: "List applications",
     readOnly: true,
     description:
-      "List applications with optional status and company filters. " +
-      "Inputs: optional status to filter by stage, and an optional company substring to match (case insensitive). " +
+      "List applications with optional status and company filters, and an optional text query. " +
+      "Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), and an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn. " +
       "Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. " +
       'Example prompt: "List all applications."',
     inputSchema: {
       status: z.enum(STATUSES).optional().describe("Only list applications in this stage."),
       company: z.string().optional().describe("Only list applications whose company name contains this text (case insensitive)."),
+      query: z.string().optional().describe("Only list applications whose role, notes or source contains this text (case insensitive)."),
     },
     outputSchema: {
       count: z.number().describe("How many applications match."),
@@ -187,9 +188,13 @@ export const tools: ToolDef<Api>[] = [
         const needle = args.company.trim().toLowerCase();
         apps = apps.filter((a) => a.company.toLowerCase().includes(needle));
       }
+      const query = args.query ? args.query.trim().toLowerCase() : "";
+      if (query) {
+        apps = apps.filter((a) => [a.role, a.notes, a.source].some((f) => (f ?? "").toLowerCase().includes(query)));
+      }
       apps = [...apps].sort((a, b) => a.id - b.id);
       const label = args.status ? ` in the ${args.status} stage` : "";
-      const comp = args.company && args.company.trim() ? ` for company matching "${args.company.trim()}"` : "";
+      const comp = (args.company && args.company.trim() ? ` for company matching "${args.company.trim()}"` : "") + (query ? ` with "${args.query!.trim()}" in the role, notes or source` : "");
       return {
         text: `Found ${apps.length} ${apps.length === 1 ? "application" : "applications"}${label}${comp}.\n\n${apps.map((a) => `#${a.id} ${a.role} at ${a.company} [${a.status}]`).join("\n") || "None."}`,
         structured: { count: apps.length, applications: apps },
