@@ -259,6 +259,25 @@ describe("export_report", () => {
   });
 });
 
+describe("delete_application", () => {
+  beforeEach(async () => {
+    await add({ company: "Shopify", role: "Intern" });
+    await add({ company: "Google", role: "Dev" });
+  });
+
+  it("removes the application and keeps the other ids", async () => {
+    const out = await run(store, "delete_application", { id: 1 });
+    expect(out.text).toContain("Deleted #1 Intern at Shopify");
+    expect(out.structured.deleted).toMatchObject({ id: 1, company: "Shopify" });
+    expect(store.list().map((a) => a.id)).toEqual([2]);
+  });
+
+  it("names the problem for an unknown id", async () => {
+    await expect(run(store, "delete_application", { id: 99 })).rejects.toThrow("There is no application with id 99");
+    expect(store.list()).toHaveLength(2);
+  });
+});
+
 describe("list_applications", () => {
   beforeEach(async () => {
     await add({ company: "Shopify", role: "Software Intern" });

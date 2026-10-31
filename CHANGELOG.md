@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added `delete_application` to remove a duplicate or mistaken application by id.
 - Added `list_applications` to list applications with optional status and company filters to see ids without exporting a full report.
 - Added `update_application` to change the deadline, notes, role or company of an existing application.
 

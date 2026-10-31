@@ -143,6 +143,26 @@ export const tools: ToolDef<Api>[] = [
     },
   },
   {
+    name: "delete_application",
+    title: "Delete application",
+    readOnly: false,
+    description:
+      "Remove an application from the tracker, for example a duplicate or a mistaken entry. " +
+      "Inputs: id of the application (from add_application or list_applications). The application is deleted from the local file and cannot be brought back, and the ids of the other applications do not change. " +
+      'Example prompt: "Delete application 3, it was a duplicate."',
+    inputSchema: {
+      id: z.number().int().positive().describe("The id of the application to delete."),
+    },
+    outputSchema: { deleted: appFields.describe("The application that was removed.") },
+    run: async (args, store) => {
+      const apps = store.list();
+      const app = apps.find((a) => a.id === args.id);
+      if (!app) throw new Error(`There is no application with id ${args.id}. Use list_applications to see the ids.`);
+      store.save(apps.filter((a) => a.id !== args.id));
+      return { text: `Deleted ${brief(app)}.`, structured: { deleted: app } };
+    },
+  },
+  {
     name: "list_applications",
     title: "List applications",
     readOnly: true,

@@ -23,7 +23,7 @@ async function call(name: string, args: Record<string, unknown> = {}) {
 describe("the server over a real MCP client", () => {
   it("lists the six tools with an output schema and the right read only hints", async () => {
     const listed = (await client.listTools()).tools;
-    expect(listed.map((t) => t.name)).toEqual(["add_application", "update_status", "update_application", "list_applications", "list_upcoming", "export_report"]);
+    expect(listed.map((t) => t.name)).toEqual(["add_application", "update_status", "update_application", "delete_application", "list_applications", "list_upcoming", "export_report"]);
     for (const tool of listed) {
       expect(tool.outputSchema, `${tool.name} output schema`).toBeTruthy();
       const def = tools.find((t) => t.name === tool.name)!;

@@ -6,7 +6,7 @@
 - Run with npx -y job-tracker-student-mcp
 - Works offline, no account. No API keys, no passwords and no network calls.
 - Applications are saved in one JSON file at ~/.job-tracker-student-mcp/applications.json. Set the JOB_TRACKER_FILE environment variable to use another path.
-- add_application and update_status write to that file. list_applications, list_upcoming and export_report only read it.
+- add_application, update_status, update_application and delete_application write to that file. list_applications, list_upcoming and export_report only read it.
 
 ## Stages and dates
 - An application is in one of four stages: applied, interview, offer or rejected.
@@ -51,6 +51,14 @@ Parameters: id, company, role, deadline, notes.
 Example call: `{"name":"update_application","arguments":{"id":1,"deadline":"2026-11-20","notes":"Referred by a friend"}}`
 Output: One sentence naming the updated application.
 Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
+
+### delete_application
+Remove an application from the tracker, for example a duplicate or a mistaken entry. Inputs: id of the application (from add_application or list_applications). The application is deleted from the local file and cannot be brought back, and the ids of the other applications do not change. Example prompt: "Delete application 3, it was a duplicate."
+Parameters: id.
+- id: The id of the application to delete. Required.
+Example call: `{"name":"delete_application","arguments":{"id":3}}`
+Output: One sentence naming the deleted application.
+Structured output: deleted with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### list_applications
 List applications with optional status and company filters. Inputs: optional status to filter by stage, and an optional company substring to match (case insensitive). Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. Example prompt: "List all applications."
