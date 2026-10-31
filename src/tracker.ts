@@ -91,7 +91,7 @@ export function checkWhen(text: string): string {
 /** Today as YYYY-MM-DD on this computer, or the date you pass in. */
 export function todayOr(text?: string): string {
   if (text !== undefined) {
-    if (!isDate(text)) throw new Error(`The date "${text}" is not a real date. Use YYYY-MM-DD.`);
+    if (!isDate(text)) throw new Error(`The date "${text}" is not a real date. Use YYYY-MM-DD, for example 2026-11-15.`);
     return text;
   }
   const now = new Date();

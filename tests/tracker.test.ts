@@ -205,7 +205,7 @@ describe("list_upcoming", () => {
   it("uses today on this computer by default and rejects a bad today", async () => {
     const out = await run(store, "list_upcoming", {});
     expect(out.structured.today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    await expect(run(store, "list_upcoming", { today: "tomorrow" })).rejects.toThrow(/not a real date/);
+    await expect(run(store, "list_upcoming", { today: "tomorrow" })).rejects.toThrow(/Use YYYY-MM-DD, for example 2026-11-15/);
   });
 });
 
