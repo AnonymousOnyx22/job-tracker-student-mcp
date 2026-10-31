@@ -167,20 +167,24 @@ export const tools: ToolDef<Api>[] = [
     title: "List applications",
     readOnly: true,
     description:
-      "List applications with optional status and company filters, and an optional text query. " +
-      "Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), and an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn. " +
+      "List applications with optional status and company filters, an optional text query and an optional deadline range. " +
+      "Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn, and optional deadline_after and deadline_before as YYYY-MM-DD. Both dates are included, and applications without a deadline are left out when you pass either one. " +
       "Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. " +
-      'Example prompt: "List all applications."',
+      'Example prompt: "Which applications have a deadline in November 2026?"',
     inputSchema: {
       status: z.enum(STATUSES).optional().describe("Only list applications in this stage."),
       company: z.string().optional().describe("Only list applications whose company name contains this text (case insensitive)."),
       query: z.string().optional().describe("Only list applications whose role, notes or source contains this text (case insensitive)."),
+      deadline_after: z.string().optional().describe("Only list applications with a deadline on or after this YYYY-MM-DD date."),
+      deadline_before: z.string().optional().describe("Only list applications with a deadline on or before this YYYY-MM-DD date."),
     },
     outputSchema: {
       count: z.number().describe("How many applications match."),
       applications: z.array(appFields).describe("The matching applications."),
     },
     run: async (args, store) => {
+      const after = args.deadline_after?.trim() ? checkDeadline(args.deadline_after.trim()) : null;
+      const before = args.deadline_before?.trim() ? checkDeadline(args.deadline_before.trim()) : null;
       const all = store.list();
       let apps = all;
       if (args.status) apps = apps.filter((a) => a.status === args.status);
@@ -192,9 +196,11 @@ export const tools: ToolDef<Api>[] = [
       if (query) {
         apps = apps.filter((a) => [a.role, a.notes, a.source].some((f) => (f ?? "").toLowerCase().includes(query)));
       }
+      if (after) apps = apps.filter((a) => a.deadline !== null && a.deadline >= after);
+      if (before) apps = apps.filter((a) => a.deadline !== null && a.deadline <= before);
       apps = [...apps].sort((a, b) => a.id - b.id);
       const label = args.status ? ` in the ${args.status} stage` : "";
-      const comp = (args.company && args.company.trim() ? ` for company matching "${args.company.trim()}"` : "") + (query ? ` with "${args.query!.trim()}" in the role, notes or source` : "");
+      const comp = (args.company && args.company.trim() ? ` for company matching "${args.company.trim()}"` : "") + (query ? ` with "${args.query!.trim()}" in the role, notes or source` : "") + (after ? ` with a deadline on or after ${after}` : "") + (before ? ` with a deadline on or before ${before}` : "");
       return {
         text: `Found ${apps.length} ${apps.length === 1 ? "application" : "applications"}${label}${comp}.\n\n${apps.map((a) => `#${a.id} ${a.role} at ${a.company} [${a.status}]`).join("\n") || "None."}`,
         structured: { count: apps.length, applications: apps },

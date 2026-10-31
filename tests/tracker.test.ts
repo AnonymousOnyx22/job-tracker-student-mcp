@@ -354,6 +354,17 @@ describe("list_applications", () => {
     expect(none.structured.count).toBe(0);
   });
 
+  it("filters by an inclusive deadline range and skips applications without a deadline", async () => {
+    await add({ company: "A", role: "R1", deadline: "2026-11-01" });
+    await add({ company: "B", role: "R2", deadline: "2026-11-30" });
+    await add({ company: "C", role: "R3", deadline: "2026-12-05" });
+    const ids = (o: { structured: Record<string, unknown> }) => (o.structured.applications as { id: number }[]).map((a) => a.id);
+    expect(ids(await run(store, "list_applications", { deadline_after: "2026-11-01", deadline_before: "2026-11-30" }))).toEqual([4, 5]);
+    expect(ids(await run(store, "list_applications", { deadline_after: "2026-11-02" }))).toEqual([5, 6]);
+    expect(ids(await run(store, "list_applications", { deadline_before: "2026-11-01" }))).toEqual([4]);
+    await expect(run(store, "list_applications", { deadline_before: "soon" })).rejects.toThrow("YYYY-MM-DD");
+  });
+
   it("does not change the saved file", async () => {
     const before = readFileSync(store.path, "utf8");
     await run(store, "list_applications", {});

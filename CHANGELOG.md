@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added optional `deadline_after` and `deadline_before` to `list_applications` to list applications due in a date range. Both dates are included.
 - Added `delete_application` to remove a duplicate or mistaken application by id.
 - Added `list_applications` to list applications with optional status and company filters to see ids without exporting a full report.
 - Added an optional `query` to `list_applications` that searches role, notes and source text, for example referral or LinkedIn.
