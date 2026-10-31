@@ -79,7 +79,7 @@ export const tools: ToolDef<Api>[] = [
     readOnly: false,
     description:
       "Move an application to another stage: applied, interview, offer or rejected. " +
-      "Inputs: id of the application (from add_application or export_report), the new status, an optional interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, and an optional note that is added to the notes. " +
+      "Inputs: id of the application (from add_application or list_applications), the new status, an optional interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, and an optional note that is added to the notes. " +
       "When the status is interview, pass interview_date so list_upcoming can remind you. " +
       'Example prompt: "Move application 1 to interview on 2026-11-20 at 14:30."',
     inputSchema: {
@@ -95,7 +95,7 @@ export const tools: ToolDef<Api>[] = [
     run: async (args, store) => {
       const apps = store.list();
       const app = apps.find((a) => a.id === args.id);
-      if (!app) throw new Error(`There is no application with id ${args.id}. Use export_report to see the ids.`);
+      if (!app) throw new Error(`There is no application with id ${args.id}. Use list_applications to see the ids.`);
       const when = args.interview_date ? checkWhen(args.interview_date.trim()) : null;
       const previous: Status = app.status;
       app.status = args.status;
@@ -115,7 +115,7 @@ export const tools: ToolDef<Api>[] = [
     readOnly: false,
     description:
       "Update the deadline, notes, role or company of an existing application. " +
-      "Inputs: id of the application (from add_application or export_report), and any of company, role, deadline as YYYY-MM-DD and notes. Only the fields you pass are changed; the rest stay the same. " +
+      "Inputs: id of the application (from add_application or list_applications), and any of company, role, deadline as YYYY-MM-DD and notes. Only the fields you pass are changed; the rest stay the same. " +
       "Pass an empty deadline to clear it. " +
       'Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."',
     inputSchema: {
@@ -129,7 +129,7 @@ export const tools: ToolDef<Api>[] = [
     run: async (args, store) => {
       const apps = store.list();
       const app = apps.find((a) => a.id === args.id);
-      if (!app) throw new Error(`There is no application with id ${args.id}. Use export_report to see the ids.`);
+      if (!app) throw new Error(`There is no application with id ${args.id}. Use list_applications to see the ids.`);
       if (args.company !== undefined) app.company = args.company.trim();
       if (args.role !== undefined) app.role = args.role.trim();
       if (args.deadline !== undefined) {
@@ -140,6 +140,40 @@ export const tools: ToolDef<Api>[] = [
       app.updated = todayOr();
       store.save(apps);
       return { text: `Updated ${brief(app)}.`, structured: { application: app } };
+    },
+  },
+  {
+    name: "list_applications",
+    title: "List applications",
+    readOnly: true,
+    description:
+      "List applications with optional status and company filters. " +
+      "Inputs: optional status to filter by stage, and an optional company substring to match (case insensitive). " +
+      "Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. " +
+      'Example prompt: "List all applications."',
+    inputSchema: {
+      status: z.enum(STATUSES).optional().describe("Only list applications in this stage."),
+      company: z.string().optional().describe("Only list applications whose company name contains this text (case insensitive)."),
+    },
+    outputSchema: {
+      count: z.number().describe("How many applications match."),
+      applications: z.array(appFields).describe("The matching applications."),
+    },
+    run: async (args, store) => {
+      const all = store.list();
+      let apps = all;
+      if (args.status) apps = apps.filter((a) => a.status === args.status);
+      if (args.company && args.company.trim()) {
+        const needle = args.company.trim().toLowerCase();
+        apps = apps.filter((a) => a.company.toLowerCase().includes(needle));
+      }
+      apps = [...apps].sort((a, b) => a.id - b.id);
+      const label = args.status ? ` in the ${args.status} stage` : "";
+      const comp = args.company && args.company.trim() ? ` for company matching "${args.company.trim()}"` : "";
+      return {
+        text: `Found ${apps.length} ${apps.length === 1 ? "application" : "applications"}${label}${comp}.\n\n${apps.map((a) => `#${a.id} ${a.role} at ${a.company} [${a.status}]`).join("\n") || "None."}`,
+        structured: { count: apps.length, applications: apps },
+      };
     },
   },
   {

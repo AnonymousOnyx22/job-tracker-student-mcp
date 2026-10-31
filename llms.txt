@@ -6,7 +6,7 @@
 - Run with npx -y job-tracker-student-mcp
 - Works offline, no account. No API keys, no passwords and no network calls.
 - Applications are saved in one JSON file at ~/.job-tracker-student-mcp/applications.json. Set the JOB_TRACKER_FILE environment variable to use another path.
-- add_application and update_status write to that file. list_upcoming and export_report only read it.
+- add_application and update_status write to that file. list_applications, list_upcoming and export_report only read it.
 
 ## Stages and dates
 - An application is in one of four stages: applied, interview, offer or rejected.
@@ -30,7 +30,7 @@ Output: One sentence naming the new application, its id, type, status and deadli
 Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### update_status
-Move an application to another stage: applied, interview, offer or rejected. Inputs: id of the application (from add_application or export_report), the new status, an optional interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, and an optional note that is added to the notes. When the status is interview, pass interview_date so list_upcoming can remind you. Example prompt: "Move application 1 to interview on 2026-11-20 at 14:30."
+Move an application to another stage: applied, interview, offer or rejected. Inputs: id of the application (from add_application or list_applications), the new status, an optional interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, and an optional note that is added to the notes. When the status is interview, pass interview_date so list_upcoming can remind you. Example prompt: "Move application 1 to interview on 2026-11-20 at 14:30."
 Parameters: id, status, interview_date, note.
 - id: The id of the application. Required.
 - status: The stage: "applied", "interview", "offer" or "rejected". Required.
@@ -41,7 +41,7 @@ Output: One sentence saying the application moved from one stage to another, wit
 Structured output: previous_status, and application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### update_application
-Update the deadline, notes, role or company of an existing application. Inputs: id of the application (from add_application or export_report), and any of company, role, deadline as YYYY-MM-DD and notes. Only the fields you pass are changed; the rest stay the same. Pass an empty deadline to clear it. Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."
+Update the deadline, notes, role or company of an existing application. Inputs: id of the application (from add_application or list_applications), and any of company, role, deadline as YYYY-MM-DD and notes. Only the fields you pass are changed; the rest stay the same. Pass an empty deadline to clear it. Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."
 Parameters: id, company, role, deadline, notes.
 - id: The id of the application. Required.
 - company: New company name.
@@ -51,6 +51,15 @@ Parameters: id, company, role, deadline, notes.
 Example call: `{"name":"update_application","arguments":{"id":1,"deadline":"2026-11-20","notes":"Referred by a friend"}}`
 Output: One sentence naming the updated application.
 Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
+
+### list_applications
+List applications with optional status and company filters. Inputs: optional status to filter by stage, and an optional company substring to match (case insensitive). Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. Example prompt: "List all applications."
+Parameters: status, company.
+- status: Only list applications in this stage.
+- company: Only list applications whose company name contains this text (case insensitive).
+Example call: `{"name":"list_applications","arguments":{}}`
+Output: A sentence with the number of applications found, then a short list of id, role and company with status.
+Structured output: count and applications with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### list_upcoming
 Show upcoming deadlines and interviews sorted by date, with a reminder for each one. Deadlines come from applications still in the applied stage, and interviews come from applications in the interview stage that have an interview_date. Rejected applications and offers are left out. Inputs: optional days, how far ahead to look (default 14), include_overdue (default true) to also show deadlines that already passed, and an optional today as YYYY-MM-DD to ask as if it were another day. Example prompt: "What deadlines and interviews do I have in the next two weeks?"

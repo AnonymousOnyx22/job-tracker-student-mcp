@@ -259,6 +259,46 @@ describe("export_report", () => {
   });
 });
 
+describe("list_applications", () => {
+  beforeEach(async () => {
+    await add({ company: "Shopify", role: "Software Intern" });
+    await add({ company: "Stripe", role: "Analyst" });
+    await add({ company: "Shopify Labs", role: "Developer" });
+    await run(store, "update_status", { id: 2, status: "offer" });
+  });
+
+  it("lists every application with its id, in id order", async () => {
+    const out = await run(store, "list_applications");
+    const apps = out.structured.applications as { id: number }[];
+    expect(out.structured.count).toBe(3);
+    expect(apps.map((a) => a.id)).toEqual([1, 2, 3]);
+    expect(out.text).toContain("#2 Analyst at Stripe [offer]");
+  });
+
+  it("filters by status", async () => {
+    const out = await run(store, "list_applications", { status: "offer" });
+    expect(out.structured.count).toBe(1);
+    expect(out.text).toContain("in the offer stage");
+  });
+
+  it("filters by company, ignoring case", async () => {
+    const out = await run(store, "list_applications", { company: "  SHOPIFY " });
+    expect((out.structured.applications as { id: number }[]).map((a) => a.id)).toEqual([1, 3]);
+  });
+
+  it("combines both filters and reports none found", async () => {
+    const out = await run(store, "list_applications", { status: "offer", company: "shopify" });
+    expect(out.structured.count).toBe(0);
+    expect(out.text).toContain("None.");
+  });
+
+  it("does not change the saved file", async () => {
+    const before = readFileSync(store.path, "utf8");
+    await run(store, "list_applications", {});
+    expect(readFileSync(store.path, "utf8")).toBe(before);
+  });
+});
+
 describe("the store and the date helpers", () => {
   it("starts empty when the file does not exist and creates the folder on save", () => {
     expect(store.list()).toEqual([]);
