@@ -6,12 +6,12 @@
     "url": "https://github.com/AnonymousOnyx22/job-tracker-student-mcp",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "job-tracker-student-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": {
         "type": "stdio"
       }

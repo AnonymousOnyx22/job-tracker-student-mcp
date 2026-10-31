@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1
 
 - Added optional `deadline_after` and `deadline_before` to `list_applications` to list applications due in a date range. Both dates are included.
 - Added `delete_application` to remove a duplicate or mistaken application by id.

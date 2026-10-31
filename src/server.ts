@@ -3,7 +3,7 @@ import { registerTools } from "./core/tools.js";
 import { tools } from "./tools.js";
 import { Store } from "./tracker.js";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.1";
 
 export function createServer(store: Store = new Store()): McpServer {
   const server = new McpServer({ name: "job-tracker-student-mcp", version: VERSION });

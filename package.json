@@ -1,6 +1,6 @@
 {
   "name": "job-tracker-student-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Job application tracker MCP server that works offline. Track internships, jobs, interviews and deadlines, see what is coming up, and export to CSV or Markdown. No account and no API keys.",
   "type": "module",
   "main": "build/src/index.js",
