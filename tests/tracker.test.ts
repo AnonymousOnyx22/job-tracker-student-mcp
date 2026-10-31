@@ -276,6 +276,37 @@ describe("delete_application", () => {
     await expect(run(store, "delete_application", { id: 99 })).rejects.toThrow("There is no application with id 99");
     expect(store.list()).toHaveLength(2);
   });
+
+  it("writes the shorter list to the file on disk", async () => {
+    await run(store, "delete_application", { id: 2 });
+    const saved = JSON.parse(readFileSync(store.path, "utf8")) as { id: number }[];
+    expect(saved.map((a) => a.id)).toEqual([1]);
+  });
+
+  it("does not hand the id of a deleted application to a different one", async () => {
+    await run(store, "delete_application", { id: 1 });
+    const out = await add({ company: "C", role: "Three" });
+    expect((out.structured.application as { id: number }).id).toBe(3);
+    expect(store.list().map((a) => a.id)).toEqual([2, 3]);
+  });
+
+  it("keeps ids unique when the newest application is deleted and another is added", async () => {
+    await run(store, "delete_application", { id: 2 });
+    const out = await add({ company: "C", role: "Three" });
+    const ids = store.list().map((a) => a.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect((out.structured.application as { company: string }).company).toBe("C");
+  });
+
+  it("errors the second time the same id is deleted", async () => {
+    await run(store, "delete_application", { id: 1 });
+    await expect(run(store, "delete_application", { id: 1 })).rejects.toThrow("There is no application with id 1");
+    expect(store.list().map((a) => a.id)).toEqual([2]);
+  });
+
+  it("points to list_applications in the unknown id error", async () => {
+    await expect(run(store, "delete_application", { id: 99 })).rejects.toThrow("list_applications");
+  });
 });
 
 describe("list_applications", () => {
