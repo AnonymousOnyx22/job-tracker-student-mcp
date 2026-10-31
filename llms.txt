@@ -91,6 +91,13 @@ Example call: `{"name":"export_report","arguments":{"format":"csv"}}`
 Output: A sentence with the number of applications exported, then the report.
 Structured output: format, count and content.
 
+## More things you can ask
+- "Export all my applications as a CSV."
+- "Which deadlines have already passed?"
+- "Delete application 3, it was a duplicate."
+- "Which applications mention a referral?"
+- "Which applications have a deadline in November 2026?"
+
 ## FAQ
 
 ### Does it send reminders on its own?

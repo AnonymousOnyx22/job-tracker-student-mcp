@@ -141,6 +141,9 @@ More things you can ask:
 - "Export all my applications as a CSV."
 - "Show only my offers as a Markdown table."
 - "Which deadlines have already passed?"
+- "Delete application 3, it was a duplicate."
+- "Which applications mention a referral?"
+- "Which applications have a deadline in November 2026?"
 
 ## Tools
 
