@@ -63,13 +63,14 @@ Output: One sentence naming the deleted application.
 Structured output: deleted with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### list_applications
-List applications with optional status and company filters, an optional text query and an optional deadline range. Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn, and optional deadline_after and deadline_before as YYYY-MM-DD. Both dates are included, and applications without a deadline are left out when you pass either one. Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report, plus summary_counts with how many of them are in each stage. Example prompt: "Which applications have a deadline in November 2026?"
-Parameters: status, company, query, deadline_after, deadline_before.
+List applications with optional status and company filters, an optional text query and an optional deadline range. Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn, and optional deadline_after and deadline_before as YYYY-MM-DD. Both dates are included, and applications without a deadline are left out when you pass either one. An optional sort orders the list by deadline (nearest first, applications without a deadline last), company (A to Z) or id (the default). Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report, plus summary_counts with how many of them are in each stage. Example prompt: "Show my applications by nearest deadline."
+Parameters: status, company, query, deadline_after, deadline_before, sort.
 - status: Only list applications in this stage.
 - company: Only list applications whose company name contains this text (case insensitive).
 - query: Only list applications whose role, notes or source contains this text (case insensitive).
 - deadline_after: Only list applications with a deadline on or after this YYYY-MM-DD date.
 - deadline_before: Only list applications with a deadline on or before this YYYY-MM-DD date.
+- sort: Order the list by deadline (nearest first, no deadline last), company (A to Z) or id. Defaults to id.
 Example call: `{"name":"list_applications","arguments":{}}`
 Output: A sentence with the number of applications found, then a short list of id, role and company with status.
 Structured output: count, applications with id, company, role, type, status, deadline, interview_date, source, notes, added and updated, and summary_counts with applied, interview, offer and rejected.

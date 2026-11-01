@@ -155,7 +155,7 @@ There are seven tools. `list_applications`, `list_upcoming` and `export_report` 
 | `update_status` | Move an application between applied, interview, offer and rejected. | `id`, `status`, `interview_date`, `note` | "Move application 1 to interview on 2026-11-20 at 14:30." |
 | `update_application` | Update the deadline, notes, role, company, type or source of an existing application. | `id`, `company`, `role`, `deadline`, `notes`, `type`, `source` | "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral." |
 | `delete_application` | Remove a duplicate or mistaken application for good. | `id` | "Delete application 3, it was a duplicate." |
-| `list_applications` | List applications with optional status, company, text query and deadline range filters to see ids. The query searches role, notes and source. The result also has counts per stage in `summary_counts`. | `status`, `company`, `query`, `deadline_after`, `deadline_before` | "Which applications have a deadline in November 2026?" |
+| `list_applications` | List applications with optional status, company, text query and deadline range filters to see ids. The query searches role, notes and source. The result also has counts per stage in `summary_counts`. Use `sort` to order by deadline, company or id. | `status`, `company`, `query`, `deadline_after`, `deadline_before`, `sort` | "Show my applications by nearest deadline." |
 | `list_upcoming` | Show upcoming deadlines and interviews sorted by date, with reminders. | `days`, `include_overdue`, `today` | "What deadlines and interviews do I have in the next two weeks?" |
 | `export_report` | Export applications as CSV or Markdown. | `format`, `status` | "Export all my applications as a CSV." |
 

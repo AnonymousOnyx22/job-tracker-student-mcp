@@ -181,14 +181,16 @@ export const tools: ToolDef<Api>[] = [
     description:
       "List applications with optional status and company filters, an optional text query and an optional deadline range. " +
       "Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn, and optional deadline_after and deadline_before as YYYY-MM-DD. Both dates are included, and applications without a deadline are left out when you pass either one. " +
+      "An optional sort orders the list by deadline (nearest first, applications without a deadline last), company (A to Z) or id (the default). " +
       "Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report, plus summary_counts with how many of them are in each stage. " +
-      'Example prompt: "Which applications have a deadline in November 2026?"',
+      'Example prompt: "Show my applications by nearest deadline."',
     inputSchema: {
       status: z.enum(STATUSES).optional().describe("Only list applications in this stage."),
       company: z.string().optional().describe("Only list applications whose company name contains this text (case insensitive)."),
       query: z.string().optional().describe("Only list applications whose role, notes or source contains this text (case insensitive)."),
       deadline_after: z.string().optional().describe("Only list applications with a deadline on or after this YYYY-MM-DD date."),
       deadline_before: z.string().optional().describe("Only list applications with a deadline on or before this YYYY-MM-DD date."),
+      sort: z.enum(["deadline", "company", "id"]).optional().describe("Order the list by deadline (nearest first, no deadline last), company (A to Z) or id. Defaults to id."),
     },
     outputSchema: {
       count: z.number().describe("How many applications match."),
@@ -213,7 +215,19 @@ export const tools: ToolDef<Api>[] = [
       }
       if (after) apps = apps.filter((a) => a.deadline !== null && a.deadline >= after);
       if (before) apps = apps.filter((a) => a.deadline !== null && a.deadline <= before);
-      apps = [...apps].sort((a, b) => a.id - b.id);
+      const byId = (a: { id: number }, b: { id: number }) => a.id - b.id;
+      if (args.sort === "deadline") {
+        apps = [...apps].sort((a, b) => {
+          if (a.deadline === b.deadline) return byId(a, b);
+          if (a.deadline === null) return 1;
+          if (b.deadline === null) return -1;
+          return a.deadline < b.deadline ? -1 : 1;
+        });
+      } else if (args.sort === "company") {
+        apps = [...apps].sort((a, b) => a.company.toLowerCase().localeCompare(b.company.toLowerCase()) || byId(a, b));
+      } else {
+        apps = [...apps].sort(byId);
+      }
       const summary_counts = { applied: 0, interview: 0, offer: 0, rejected: 0 };
       for (const a of apps) summary_counts[a.status]++;
       const label = args.status ? ` in the ${args.status} stage` : "";

@@ -393,6 +393,16 @@ describe("list_applications", () => {
     await expect(run(store, "list_applications", { deadline_before: "soon" })).rejects.toThrow("YYYY-MM-DD");
   });
 
+  it("sorts by deadline, company or id", async () => {
+    await add({ company: "A", role: "R1", deadline: "2026-12-05" });
+    await add({ company: "b", role: "R2", deadline: "2026-11-01" });
+    const ids = (o: { structured: Record<string, unknown> }) => (o.structured.applications as { id: number }[]).map((a) => a.id);
+    expect(ids(await run(store, "list_applications", { sort: "deadline" }))).toEqual([5, 4, 1, 2, 3]);
+    expect(ids(await run(store, "list_applications", { sort: "company" }))).toEqual([4, 5, 1, 3, 2]);
+    expect(ids(await run(store, "list_applications", { sort: "id" }))).toEqual([1, 2, 3, 4, 5]);
+    expect(ids(await run(store, "list_applications", { sort: "deadline", status: "applied" }))).toEqual([5, 4, 1, 3]);
+  });
+
   it("does not change the saved file", async () => {
     const before = readFileSync(store.path, "utf8");
     await run(store, "list_applications", {});
