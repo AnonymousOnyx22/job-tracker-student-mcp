@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `delete_application` is now marked as destructive, so clients can ask for confirmation before it removes an application.
+
 ## 0.1.1
 
 - Added optional `deadline_after` and `deadline_before` to `list_applications` to list applications due in a date range. Both dates are included.

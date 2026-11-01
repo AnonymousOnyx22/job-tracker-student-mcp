@@ -19,6 +19,8 @@ export interface ToolDef<Api> {
   outputSchema?: Shape;
   /** True when the tool never changes the saved applications. */
   readOnly: boolean;
+  /** True when the tool permanently removes saved data. Defaults to false. */
+  destructive?: boolean;
   run: (args: any, api: Api) => Promise<ToolOutput>;
 }
 
@@ -49,7 +51,7 @@ export function registerTools<Api>(server: McpServer, tools: ToolDef<Api>[], api
         description: tool.description,
         inputSchema: tool.inputSchema,
         outputSchema: tool.outputSchema,
-        annotations: { readOnlyHint: tool.readOnly, destructiveHint: false, openWorldHint: false },
+        annotations: { readOnlyHint: tool.readOnly, destructiveHint: tool.destructive ?? false, openWorldHint: false },
       },
       async (args: unknown) => runTool(tool, args, api),
     );

@@ -28,6 +28,7 @@ describe("the server over a real MCP client", () => {
       expect(tool.outputSchema, `${tool.name} output schema`).toBeTruthy();
       const def = tools.find((t) => t.name === tool.name)!;
       expect(tool.annotations?.readOnlyHint, `${tool.name} read only hint`).toBe(def.readOnly);
+      expect(tool.annotations?.destructiveHint, `${tool.name} destructive hint`).toBe(tool.name === "delete_application");
     }
   });
 

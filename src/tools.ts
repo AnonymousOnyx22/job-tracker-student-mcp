@@ -146,6 +146,7 @@ export const tools: ToolDef<Api>[] = [
     name: "delete_application",
     title: "Delete application",
     readOnly: false,
+    destructive: true,
     description:
       "Remove an application from the tracker, for example a duplicate or a mistaken entry. " +
       "Inputs: id of the application (from add_application or list_applications). The application is deleted from the local file and cannot be brought back, and the ids of the other applications do not change. " +
