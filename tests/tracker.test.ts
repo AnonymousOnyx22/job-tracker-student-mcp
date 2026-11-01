@@ -299,6 +299,41 @@ describe("export_report", () => {
   });
 });
 
+describe("import_applications", () => {
+  it("imports rows, skips bad ones and warns about duplicates", async () => {
+    await add({ company: "Shopify", role: "Software Intern", deadline: "2026-11-15" });
+    const csv = [
+      "Company,Role,Type,Deadline,Notes,Extra",
+      'shopify,Software Intern,internship,2026-11-15,"said ""hi"", twice",x',
+      "Acme,,job,,,",
+      "Acme,Dev,job,2026-13-40,,",
+      "Acme,Dev,tutor,,,",
+      "Globex,Analyst,,,,",
+    ].join("\r\n");
+    const out = await run(store, "import_applications", { csv });
+    expect(out.structured.imported).toBe(2);
+    const skipped = out.structured.skipped as { row: number }[];
+    expect(skipped.map((s) => s.row)).toEqual([3, 4, 5]);
+    expect((out.structured.warnings as string[])[0]).toContain("#1");
+    expect(store.list().map((a) => a.id)).toEqual([1, 2, 3]);
+    expect(store.list()[1]).toMatchObject({ type: "internship", notes: 'said "hi", twice' });
+    expect(store.list()[2]).toMatchObject({ company: "Globex", type: "job", status: "applied" });
+  });
+
+  it("reads back the CSV from export_report", async () => {
+    await add({ company: "Shopify", role: "Intern", notes: "=SUM(1)" });
+    const exported = (await run(store, "export_report", { format: "csv" })).structured.content;
+    const other = tempStore();
+    await run(other, "import_applications", { csv: exported });
+    expect(other.list()[0]).toMatchObject({ company: "Shopify", role: "Intern", notes: "=SUM(1)" });
+  });
+
+  it("rejects a CSV without company and role columns or with an open quote", async () => {
+    await expect(run(store, "import_applications", { csv: "name,title\nA,B\n" })).rejects.toThrow("company and role");
+    await expect(run(store, "import_applications", { csv: 'company,role\n"A,B\n' })).rejects.toThrow("never closed");
+  });
+});
+
 describe("delete_application", () => {
   beforeEach(async () => {
     await add({ company: "Shopify", role: "Intern" });

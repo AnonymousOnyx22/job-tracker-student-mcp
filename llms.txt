@@ -6,7 +6,7 @@
 - Run with npx -y job-tracker-student-mcp
 - Works offline, no account. No API keys, no passwords and no network calls.
 - Applications are saved in one JSON file at ~/.job-tracker-student-mcp/applications.json. Set the JOB_TRACKER_FILE environment variable to use another path.
-- add_application, update_status, update_application and delete_application write to that file. list_applications, list_upcoming and export_report only read it.
+- add_application, import_applications, update_status, update_application and delete_application write to that file. list_applications, list_upcoming and export_report only read it.
 
 ## Stages and dates
 - An application is in one of four stages: applied, interview, offer or rejected.
@@ -28,6 +28,14 @@ Parameters: company, role, deadline, source, type, status, notes.
 Example call: `{"name":"add_application","arguments":{"company":"Shopify","role":"Software Intern","deadline":"2026-11-15","source":"LinkedIn","type":"internship"}}`
 Output: One sentence naming the new application, its id, type, status and deadline.
 Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated, and an optional warning when a duplicate exists.
+
+### import_applications
+Add many applications at once from CSV text, for example a list you kept in a spreadsheet. Inputs: csv, the text of the file with a header row. The columns company and role are required; type, status, deadline, interview_date, source and notes are optional, and other columns such as id are ignored. The CSV from export_report works as is. Each valid row is saved as a new application with a new id. A row with a blank company or role, an unknown type or status, or a bad date is skipped and listed with its row number. A row that matches an existing application by company, role and deadline is still saved and gets a warning. Example prompt: "Import these applications from my spreadsheet: company,role,deadline ..."
+Parameters: csv.
+- csv: The CSV text, with a header row that has at least company and role. Required.
+Example call: `{"name":"import_applications","arguments":{"csv":"company,role,deadline\nShopify,Software Intern,2026-11-15\n"}}`
+Output: A sentence with how many applications were imported and skipped, then one line per skipped row and per duplicate warning.
+Structured output: imported, applications with id, company, role, type, status, deadline, interview_date, source, notes, added and updated, skipped with row and error, and warnings.
 
 ### update_status
 Move an application to another stage: applied, interview, offer or rejected. Inputs: id of the application (from add_application or list_applications), the new status, an optional interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, and an optional note that is added to the notes. When the status is interview, pass interview_date so list_upcoming can remind you. Example prompt: "Move application 1 to interview on 2026-11-20 at 14:30."

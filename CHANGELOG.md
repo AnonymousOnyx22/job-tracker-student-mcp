@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added `import_applications` to load many applications from CSV text, for example a spreadsheet list. It needs company and role columns, skips bad rows and lists them with their row number, and warns about likely duplicates. The CSV from `export_report` can be imported as is.
 - `update_application` now accepts an optional `interview_date`, so a wrong interview date can be fixed without changing the stage. An empty `interview_date` clears it, and `list_upcoming` shows the corrected date.
 - `update_application` now rejects a blank `company` or `role` with the same error as `add_application`, instead of saving an empty value.
 - `update_status`, `update_application` and `delete_application` now name the closest existing ids when the id is unknown, and point to `list_applications`.

@@ -149,6 +149,47 @@ export function toCsv(apps: Application[]): string {
   return [CSV_COLUMNS.join(","), ...rows].join("\n") + "\n";
 }
 
+/** Splits CSV text into rows of cells. Handles quoted cells, doubled quotes, CRLF and a leading byte order mark. */
+export function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = "";
+  let quoted = false;
+  let started = false;
+  const src = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (quoted) {
+      if (ch === '"' && src[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (ch === '"') quoted = false;
+      else cell += ch;
+      continue;
+    }
+    if (ch === '"') {
+      quoted = true;
+      started = true;
+    } else if (ch === ",") {
+      row.push(cell);
+      cell = "";
+      started = true;
+    } else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && src[i + 1] === "\n") i++;
+      if (started || cell) rows.push([...row, cell]);
+      row = [];
+      cell = "";
+      started = false;
+    } else {
+      cell += ch;
+      started = true;
+    }
+  }
+  if (quoted) throw new Error("The CSV has a quote that is never closed. Check the cell that starts with a quote.");
+  if (started || cell) rows.push([...row, cell]);
+  return rows;
+}
+
 function mdCell(value: string | number | null): string {
   return value === null ? "" : String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }

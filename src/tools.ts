@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { type ToolDef, bullets } from "./core/tools.js";
-import { STATUSES, TYPES, type Application, type Status, type Store, checkDeadline, checkWhen, todayOr, toCsv, toMarkdown, upcoming } from "./tracker.js";
+import { STATUSES, TYPES, type Application, type Status, type Store, checkDeadline, checkWhen, parseCsv, todayOr, toCsv, toMarkdown, upcoming } from "./tracker.js";
 
 type Api = Store;
 
@@ -26,6 +26,11 @@ const clean = (text: string | undefined): string | null => {
 };
 
 const brief = (a: Application) => `#${a.id} ${a.role} at ${a.company}`;
+
+const same = (s: string) => s.toLowerCase();
+
+const findTwin = (apps: Application[], app: Pick<Application, "company" | "role" | "deadline">) =>
+  apps.find((a) => same(a.company) === same(app.company) && same(a.role) === same(app.role) && a.deadline === app.deadline);
 
 const findApp = (apps: Application[], id: number): Application => {
   const app = apps.find((a) => a.id === id);
@@ -81,8 +86,7 @@ export const tools: ToolDef<Api>[] = [
         updated: now,
       };
       if (!app.company || !app.role) throw new Error("Give a company and a role that are not blank.");
-      const same = (s: string) => s.toLowerCase();
-      const twin = apps.find((a) => same(a.company) === same(app.company) && same(a.role) === same(app.role) && a.deadline === app.deadline);
+      const twin = findTwin(apps, app);
       store.save([...apps, app]);
       const extra = [deadline ? `deadline ${deadline}` : null, app.source ? `from ${app.source}` : null].filter(Boolean).join(", ");
       const warning = twin ? `${brief(twin)} has the same company, role and deadline, so this may be a duplicate. Use delete_application if it is.` : undefined;
@@ -90,6 +94,81 @@ export const tools: ToolDef<Api>[] = [
         text: `Added ${brief(app)} as ${app.type}, status ${app.status}${extra ? `, ${extra}` : ""}.${warning ? ` Warning: ${warning}` : ""}`,
         structured: warning ? { application: app, warning } : { application: app },
       };
+    },
+  },
+  {
+    name: "import_applications",
+    title: "Import applications",
+    readOnly: false,
+    description:
+      "Add many applications at once from CSV text, for example a list you kept in a spreadsheet. " +
+      "Inputs: csv, the text of the file with a header row. The columns company and role are required; type, status, deadline, interview_date, source and notes are optional, and other columns such as id are ignored. The CSV from export_report works as is. " +
+      "Each valid row is saved as a new application with a new id. A row with a blank company or role, an unknown type or status, or a bad date is skipped and listed with its row number. A row that matches an existing application by company, role and deadline is still saved and gets a warning. " +
+      'Example prompt: "Import these applications from my spreadsheet: company,role,deadline ..."',
+    inputSchema: {
+      csv: z.string().min(1).describe("The CSV text, with a header row that has at least company and role."),
+    },
+    outputSchema: {
+      imported: z.number().describe("How many applications were saved."),
+      applications: z.array(appFields).describe("The applications that were saved."),
+      skipped: z.array(z.object({ row: z.number(), error: z.string() })).describe("Rows that were not saved, with the row number in the file (the header is row 1) and the reason."),
+      warnings: z.array(z.string()).describe("Saved rows that may duplicate an existing application."),
+    },
+    run: async (args, store) => {
+      const rows = parseCsv(args.csv);
+      if (rows.length === 0) throw new Error("The CSV is empty. Add a header row with company and role, then one row per application.");
+      const header = rows[0].map((h) => h.trim().toLowerCase());
+      const col = (name: string) => header.indexOf(name);
+      if (col("company") === -1 || col("role") === -1) throw new Error("The CSV needs a header row with the columns company and role.");
+      const all = store.list();
+      const added: Application[] = [];
+      const skipped: { row: number; error: string }[] = [];
+      const warnings: string[] = [];
+      const now = todayOr();
+      let nextId = all.reduce((max, a) => Math.max(max, a.id), 0) + 1;
+      rows.slice(1).forEach((cells, i) => {
+        const row = i + 2;
+        // Undo the apostrophe that export_report puts in front of cells that start like a formula.
+        const get = (name: string) => clean(col(name) === -1 ? undefined : cells[col(name)]?.replace(/^'(?=[=+\-@])/, ""));
+        try {
+          const company = get("company");
+          const role = get("role");
+          if (!company || !role) throw new Error("Give a company and a role that are not blank.");
+          const type = (get("type") ?? "job").toLowerCase();
+          if (!(TYPES as readonly string[]).includes(type)) throw new Error(`The type "${type}" is not valid. Use job or internship.`);
+          const state = (get("status") ?? "applied").toLowerCase();
+          if (!(STATUSES as readonly string[]).includes(state)) throw new Error(`The status "${state}" is not valid. Use applied, interview, offer or rejected.`);
+          const deadline = get("deadline");
+          const when = get("interview_date");
+          const app: Application = {
+            id: nextId,
+            company,
+            role,
+            type: type as Application["type"],
+            status: state as Status,
+            deadline: deadline ? checkDeadline(deadline) : null,
+            interview_date: when ? checkWhen(when) : null,
+            source: get("source"),
+            notes: get("notes"),
+            added: now,
+            updated: now,
+          };
+          const twin = findTwin(all, app);
+          if (twin) warnings.push(`Row ${row}: ${brief(twin)} has the same company, role and deadline, so this may be a duplicate.`);
+          nextId++;
+          all.push(app);
+          added.push(app);
+        } catch (err) {
+          skipped.push({ row, error: err instanceof Error ? err.message : String(err) });
+        }
+      });
+      if (added.length) store.save(all);
+      const lines = [
+        `Imported ${added.length} ${added.length === 1 ? "application" : "applications"}, skipped ${skipped.length}.`,
+        ...skipped.map((s) => `Skipped row ${s.row}: ${s.error}`),
+        ...warnings.map((w) => `Warning: ${w}`),
+      ];
+      return { text: lines.join("\n"), structured: { imported: added.length, applications: added, skipped, warnings } };
     },
   },
   {

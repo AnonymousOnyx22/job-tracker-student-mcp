@@ -114,8 +114,8 @@ describe("the README", () => {
   });
 
   it("says how many tools there are", () => {
-    expect(readme).toContain("There are seven tools.");
-    expect(tools).toHaveLength(7);
+    expect(readme).toContain("There are eight tools.");
+    expect(tools).toHaveLength(8);
   });
 });
 
