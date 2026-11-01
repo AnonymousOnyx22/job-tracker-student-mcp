@@ -1,6 +1,6 @@
 # job-tracker-student-mcp
 
-> Job application tracker MCP server. Track internships, jobs, interviews and deadlines offline, with status updates and a list of what is coming up. No account. Free and open source, works with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf.
+> Job application tracker MCP server for students, with co op and internship searches in mind. Track internships, jobs, interviews and deadlines offline, with status updates and a list of what is coming up. No account. Free and open source, works with Claude Desktop, Claude Code, Cursor, VS Code and Windsurf.
 
 ## Setup
 - Run with npx -y job-tracker-student-mcp
