@@ -41,8 +41,8 @@ Output: One sentence saying the application moved from one stage to another, wit
 Structured output: previous_status, and application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
 
 ### update_application
-Update the deadline, notes, role, company, type or source of an existing application. Inputs: id of the application (from add_application or list_applications), and any of company, role, deadline as YYYY-MM-DD, notes, type (job or internship) and source. Only the fields you pass are changed; the rest stay the same. Pass an empty deadline or an empty source to clear it. Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."
-Parameters: id, company, role, deadline, notes, type, source.
+Update the deadline, notes, role, company, type, source or interview date of an existing application. Inputs: id of the application (from add_application or list_applications), and any of company, role, deadline as YYYY-MM-DD, notes, type (job or internship), source and interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM. Only the fields you pass are changed; the rest stay the same. Pass an empty deadline, source or interview_date to clear it. Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."
+Parameters: id, company, role, deadline, notes, type, source, interview_date.
 - id: The id of the application. Required.
 - company: New company name.
 - role: New role title.
@@ -50,6 +50,7 @@ Parameters: id, company, role, deadline, notes, type, source.
 - notes: New notes, replacing the old ones.
 - type: New type, "job" or "internship".
 - source: New source, such as LinkedIn or a career fair, or an empty string to clear it.
+- interview_date: New interview date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, or an empty string to clear it.
 Example call: `{"name":"update_application","arguments":{"id":1,"deadline":"2026-11-20","notes":"Referred by a friend"}}`
 Output: One sentence naming the updated application.
 Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.

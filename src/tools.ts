@@ -132,9 +132,9 @@ export const tools: ToolDef<Api>[] = [
     title: "Update application",
     readOnly: false,
     description:
-      "Update the deadline, notes, role, company, type or source of an existing application. " +
-      "Inputs: id of the application (from add_application or list_applications), and any of company, role, deadline as YYYY-MM-DD, notes, type (job or internship) and source. Only the fields you pass are changed; the rest stay the same. " +
-      "Pass an empty deadline or an empty source to clear it. " +
+      "Update the deadline, notes, role, company, type, source or interview date of an existing application. " +
+      "Inputs: id of the application (from add_application or list_applications), and any of company, role, deadline as YYYY-MM-DD, notes, type (job or internship), source and interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM. Only the fields you pass are changed; the rest stay the same. " +
+      "Pass an empty deadline, source or interview_date to clear it. " +
       'Example prompt: "Update application 1 to set the deadline to 2026-11-20 and add a note about the referral."',
     inputSchema: {
       id: z.number().int().positive().describe("The id of the application."),
@@ -144,6 +144,7 @@ export const tools: ToolDef<Api>[] = [
       notes: z.string().optional().describe("New notes, replacing the old ones."),
       type: z.enum(TYPES).optional().describe('New type, "job" or "internship".'),
       source: z.string().optional().describe("New source, such as LinkedIn or a career fair, or an empty string to clear it."),
+      interview_date: z.string().optional().describe("New interview date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, or an empty string to clear it."),
     },
     outputSchema: { application: appFields.describe("The application after the change.") },
     run: async (args, store) => {
@@ -157,6 +158,10 @@ export const tools: ToolDef<Api>[] = [
       if (args.deadline !== undefined) {
         const d = args.deadline.trim();
         app.deadline = d ? checkDeadline(d) : null;
+      }
+      if (args.interview_date !== undefined) {
+        const w = args.interview_date.trim();
+        app.interview_date = w ? checkWhen(w) : null;
       }
       if (args.notes !== undefined) app.notes = clean(args.notes);
       if (args.type !== undefined) app.type = args.type;

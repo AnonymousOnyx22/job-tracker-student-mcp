@@ -167,6 +167,18 @@ describe("update_application", () => {
     expect(store.list()[0].deadline).toBeNull();
   });
 
+  it("changes and clears the interview date", async () => {
+    await run(store, "update_application", { id: 1, interview_date: "2026-11-21T10:00" });
+    expect(store.list()[0].interview_date).toBe("2026-11-21T10:00");
+    await run(store, "update_application", { id: 1, interview_date: "" });
+    expect(store.list()[0].interview_date).toBeNull();
+  });
+
+  it("rejects a bad interview date and changes nothing", async () => {
+    await expect(run(store, "update_application", { id: 1, interview_date: "2026-11-20T25:00" })).rejects.toThrow(/not valid/);
+    expect(store.list()[0].interview_date).toBeNull();
+  });
+
   it("rejects a bad deadline and changes nothing", async () => {
     await expect(run(store, "update_application", { id: 1, deadline: "Nov 15" })).rejects.toThrow(/YYYY-MM-DD/);
     expect(store.list()[0].deadline).toBe("2026-11-15");
