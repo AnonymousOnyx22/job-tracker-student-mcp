@@ -295,6 +295,7 @@ describe("delete_application", () => {
 
   it("names the problem for an unknown id", async () => {
     await expect(run(store, "delete_application", { id: 99 })).rejects.toThrow("There is no application with id 99");
+    await expect(run(store, "delete_application", { id: 99 })).rejects.toThrow("The closest ids are 1, 2. Call list_applications");
     expect(store.list()).toHaveLength(2);
   });
 

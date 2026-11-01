@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `update_status`, `update_application` and `delete_application` now name the closest existing ids when the id is unknown, and point to `list_applications`.
 - `list_applications` now accepts an optional `sort` of `deadline` (nearest first, no deadline last), `company` or `id`. Without it the list stays in id order.
 - `list_applications` now returns a `summary_counts` field with how many of the matching applications are in each stage (applied, interview, offer and rejected). The existing fields are unchanged.
 - `update_application` now accepts optional `type` and `source`, so a wrong internship or job type or a wrong source can be fixed without deleting the application. An empty `source` clears it.

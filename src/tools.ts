@@ -27,6 +27,18 @@ const clean = (text: string | undefined): string | null => {
 
 const brief = (a: Application) => `#${a.id} ${a.role} at ${a.company}`;
 
+const findApp = (apps: Application[], id: number): Application => {
+  const app = apps.find((a) => a.id === id);
+  if (app) return app;
+  if (apps.length === 0) throw new Error(`There is no application with id ${id}. The tracker is empty. Use add_application to add one.`);
+  const closest = apps
+    .map((a) => a.id)
+    .sort((a, b) => Math.abs(a - id) - Math.abs(b - id) || a - b)
+    .slice(0, 5)
+    .sort((a, b) => a - b);
+  throw new Error(`There is no application with id ${id}. The closest ids are ${closest.join(", ")}. Call list_applications to see all of them.`);
+};
+
 export const tools: ToolDef<Api>[] = [
   {
     name: "add_application",
@@ -101,8 +113,7 @@ export const tools: ToolDef<Api>[] = [
     },
     run: async (args, store) => {
       const apps = store.list();
-      const app = apps.find((a) => a.id === args.id);
-      if (!app) throw new Error(`There is no application with id ${args.id}. Use list_applications to see the ids.`);
+      const app = findApp(apps, args.id);
       const when = args.interview_date ? checkWhen(args.interview_date.trim()) : null;
       const previous: Status = app.status;
       app.status = args.status;
@@ -137,8 +148,7 @@ export const tools: ToolDef<Api>[] = [
     outputSchema: { application: appFields.describe("The application after the change.") },
     run: async (args, store) => {
       const apps = store.list();
-      const app = apps.find((a) => a.id === args.id);
-      if (!app) throw new Error(`There is no application with id ${args.id}. Use list_applications to see the ids.`);
+      const app = findApp(apps, args.id);
       if (args.company !== undefined) app.company = args.company.trim();
       if (args.role !== undefined) app.role = args.role.trim();
       if (args.deadline !== undefined) {
@@ -168,8 +178,7 @@ export const tools: ToolDef<Api>[] = [
     outputSchema: { deleted: appFields.describe("The application that was removed.") },
     run: async (args, store) => {
       const apps = store.list();
-      const app = apps.find((a) => a.id === args.id);
-      if (!app) throw new Error(`There is no application with id ${args.id}. Use list_applications to see the ids.`);
+      const app = findApp(apps, args.id);
       store.save(apps.filter((a) => a.id !== args.id));
       return { text: `Deleted ${brief(app)}.`, structured: { deleted: app } };
     },
