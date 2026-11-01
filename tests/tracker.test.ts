@@ -11,6 +11,16 @@ beforeEach(() => {
 const add = (args: Record<string, unknown>) => run(store, "add_application", args);
 
 describe("add_application", () => {
+  it("warns about a duplicate company, role and deadline but still saves it", async () => {
+    const first = await add({ company: "Shopify", role: "Software Intern", deadline: "2026-11-15" });
+    expect(first.structured.warning).toBeUndefined();
+    const second = await add({ company: "shopify", role: "Software Intern", deadline: "2026-11-15" });
+    expect(second.structured.warning).toContain("#1");
+    expect(store.list()).toHaveLength(2);
+    const other = await add({ company: "Shopify", role: "Software Intern", deadline: "2026-12-01" });
+    expect(other.structured.warning).toBeUndefined();
+  });
+
   it("saves an application in the applied stage and gives it an id", async () => {
     const out = await add({ company: "Shopify", role: "Software Intern", deadline: "2026-11-15", source: "LinkedIn", type: "internship" });
     expect(out.structured.application).toMatchObject({

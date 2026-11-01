@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `add_application` now returns a `warning` field when an application with the same company, role and deadline already exists. The new application is still saved.
 - `delete_application` is now marked as destructive, so clients can ask for confirmation before it removes an application.
 
 ## 0.1.1

@@ -16,7 +16,7 @@
 ## Tools
 
 ### add_application
-Add a job or internship to the tracker. It starts in the applied stage unless you pass another status. Inputs: company and role (both required), an optional deadline as YYYY-MM-DD, an optional source such as LinkedIn or a career fair, an optional type of job or internship, an optional status and optional notes. The tool saves the application on this computer and returns its id, which update_status needs. Example prompt: "Add a Software Intern role at Shopify with a deadline of 2026-11-15, found on LinkedIn."
+Add a job or internship to the tracker. It starts in the applied stage unless you pass another status. Inputs: company and role (both required), an optional deadline as YYYY-MM-DD, an optional source such as LinkedIn or a career fair, an optional type of job or internship, an optional status and optional notes. The tool saves the application on this computer and returns its id, which update_status needs. If an application with the same company, role and deadline already exists, the new one is still saved and the result has a warning field. Example prompt: "Add a Software Intern role at Shopify with a deadline of 2026-11-15, found on LinkedIn."
 Parameters: company, role, deadline, source, type, status, notes.
 - company: Name of the company. Required.
 - role: Title of the role. Required.
@@ -27,7 +27,7 @@ Parameters: company, role, deadline, source, type, status, notes.
 - notes: Anything you want to remember about it.
 Example call: `{"name":"add_application","arguments":{"company":"Shopify","role":"Software Intern","deadline":"2026-11-15","source":"LinkedIn","type":"internship"}}`
 Output: One sentence naming the new application, its id, type, status and deadline.
-Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated.
+Structured output: application with id, company, role, type, status, deadline, interview_date, source, notes, added and updated, and an optional warning when a duplicate exists.
 
 ### update_status
 Move an application to another stage: applied, interview, offer or rejected. Inputs: id of the application (from add_application or list_applications), the new status, an optional interview_date as YYYY-MM-DD or YYYY-MM-DDTHH:MM, and an optional note that is added to the notes. When the status is interview, pass interview_date so list_upcoming can remind you. Example prompt: "Move application 1 to interview on 2026-11-20 at 14:30."

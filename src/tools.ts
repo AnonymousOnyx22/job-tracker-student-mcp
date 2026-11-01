@@ -36,6 +36,7 @@ export const tools: ToolDef<Api>[] = [
       "Add a job or internship to the tracker. It starts in the applied stage unless you pass another status. " +
       "Inputs: company and role (both required), an optional deadline as YYYY-MM-DD, an optional source such as LinkedIn or a career fair, an optional type of job or internship, an optional status and optional notes. " +
       "The tool saves the application on this computer and returns its id, which update_status needs. " +
+      "If an application with the same company, role and deadline already exists, the new one is still saved and the result has a warning field. " +
       'Example prompt: "Add a Software Intern role at Shopify with a deadline of 2026-11-15, found on LinkedIn."',
     inputSchema: {
       company: z.string().min(1).describe("Name of the company."),
@@ -46,7 +47,10 @@ export const tools: ToolDef<Api>[] = [
       status: status.default("applied"),
       notes: z.string().optional().describe("Anything you want to remember about it."),
     },
-    outputSchema: { application: appFields.describe("The application that was saved.") },
+    outputSchema: {
+      application: appFields.describe("The application that was saved."),
+      warning: z.string().optional().describe("Only present when an application with the same company, role and deadline already existed. The new one is still saved."),
+    },
     run: async (args, store) => {
       const deadline = args.deadline ? checkDeadline(args.deadline.trim()) : null;
       const apps = store.list();
@@ -65,11 +69,14 @@ export const tools: ToolDef<Api>[] = [
         updated: now,
       };
       if (!app.company || !app.role) throw new Error("Give a company and a role that are not blank.");
+      const same = (s: string) => s.toLowerCase();
+      const twin = apps.find((a) => same(a.company) === same(app.company) && same(a.role) === same(app.role) && a.deadline === app.deadline);
       store.save([...apps, app]);
       const extra = [deadline ? `deadline ${deadline}` : null, app.source ? `from ${app.source}` : null].filter(Boolean).join(", ");
+      const warning = twin ? `${brief(twin)} has the same company, role and deadline, so this may be a duplicate. Use delete_application if it is.` : undefined;
       return {
-        text: `Added ${brief(app)} as ${app.type}, status ${app.status}${extra ? `, ${extra}` : ""}.`,
-        structured: { application: app },
+        text: `Added ${brief(app)} as ${app.type}, status ${app.status}${extra ? `, ${extra}` : ""}.${warning ? ` Warning: ${warning}` : ""}`,
+        structured: warning ? { application: app, warning } : { application: app },
       };
     },
   },
