@@ -181,7 +181,7 @@ export const tools: ToolDef<Api>[] = [
     description:
       "List applications with optional status and company filters, an optional text query and an optional deadline range. " +
       "Inputs: optional status to filter by stage, an optional company substring to match (case insensitive), an optional query that searches the role, notes and source text (case insensitive), for example referral or LinkedIn, and optional deadline_after and deadline_before as YYYY-MM-DD. Both dates are included, and applications without a deadline are left out when you pass either one. " +
-      "Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report. " +
+      "Returns all matching applications as a structured list with their ids, so you can see application ids without exporting a full report, plus summary_counts with how many of them are in each stage. " +
       'Example prompt: "Which applications have a deadline in November 2026?"',
     inputSchema: {
       status: z.enum(STATUSES).optional().describe("Only list applications in this stage."),
@@ -193,6 +193,9 @@ export const tools: ToolDef<Api>[] = [
     outputSchema: {
       count: z.number().describe("How many applications match."),
       applications: z.array(appFields).describe("The matching applications."),
+      summary_counts: z
+        .object({ applied: z.number(), interview: z.number(), offer: z.number(), rejected: z.number() })
+        .describe("How many of the matching applications are in each stage."),
     },
     run: async (args, store) => {
       const after = args.deadline_after?.trim() ? checkDeadline(args.deadline_after.trim()) : null;
@@ -211,11 +214,13 @@ export const tools: ToolDef<Api>[] = [
       if (after) apps = apps.filter((a) => a.deadline !== null && a.deadline >= after);
       if (before) apps = apps.filter((a) => a.deadline !== null && a.deadline <= before);
       apps = [...apps].sort((a, b) => a.id - b.id);
+      const summary_counts = { applied: 0, interview: 0, offer: 0, rejected: 0 };
+      for (const a of apps) summary_counts[a.status]++;
       const label = args.status ? ` in the ${args.status} stage` : "";
       const comp = (args.company && args.company.trim() ? ` for company matching "${args.company.trim()}"` : "") + (query ? ` with "${args.query!.trim()}" in the role, notes or source` : "") + (after ? ` with a deadline on or after ${after}` : "") + (before ? ` with a deadline on or before ${before}` : "");
       return {
         text: `Found ${apps.length} ${apps.length === 1 ? "application" : "applications"}${label}${comp}.\n\n${apps.map((a) => `#${a.id} ${a.role} at ${a.company} [${a.status}]`).join("\n") || "None."}`,
-        structured: { count: apps.length, applications: apps },
+        structured: { count: apps.length, applications: apps, summary_counts },
       };
     },
   },

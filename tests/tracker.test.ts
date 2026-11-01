@@ -346,6 +346,13 @@ describe("list_applications", () => {
     expect(out.text).toContain("#2 Analyst at Stripe [offer]");
   });
 
+  it("counts the matching applications per stage", async () => {
+    const all = await run(store, "list_applications");
+    expect(all.structured.summary_counts).toEqual({ applied: 2, interview: 0, offer: 1, rejected: 0 });
+    const shopify = await run(store, "list_applications", { company: "shopify" });
+    expect(shopify.structured.summary_counts).toEqual({ applied: 2, interview: 0, offer: 0, rejected: 0 });
+  });
+
   it("filters by status", async () => {
     const out = await run(store, "list_applications", { status: "offer" });
     expect(out.structured.count).toBe(1);

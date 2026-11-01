@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `list_applications` now returns a `summary_counts` field with how many of the matching applications are in each stage (applied, interview, offer and rejected). The existing fields are unchanged.
 - `update_application` now accepts optional `type` and `source`, so a wrong internship or job type or a wrong source can be fixed without deleting the application. An empty `source` clears it.
 - `add_application` now returns a `warning` field when an application with the same company, role and deadline already exists. The new application is still saved.
 - `delete_application` is now marked as destructive, so clients can ask for confirmation before it removes an application.
