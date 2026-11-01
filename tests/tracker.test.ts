@@ -144,6 +144,17 @@ describe("update_application", () => {
     expect(out.structured.application).toMatchObject({ role: "Backend Intern", notes: "new note" });
   });
 
+  it("changes type and source, and clears source with an empty string", async () => {
+    await run(store, "update_application", { id: 1, type: "internship", source: "Career fair" });
+    expect(store.list()[0]).toMatchObject({ type: "internship", source: "Career fair" });
+    await run(store, "update_application", { id: 1, source: "" });
+    expect(store.list()[0]).toMatchObject({ type: "internship", source: null });
+  });
+
+  it("rejects an unknown type", async () => {
+    await expect(run(store, "update_application", { id: 1, type: "volunteer" })).rejects.toThrow();
+  });
+
   it("clears the deadline with an empty string", async () => {
     await run(store, "update_application", { id: 1, deadline: "" });
     expect(store.list()[0].deadline).toBeNull();
