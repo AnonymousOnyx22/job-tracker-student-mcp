@@ -149,8 +149,11 @@ export const tools: ToolDef<Api>[] = [
     run: async (args, store) => {
       const apps = store.list();
       const app = findApp(apps, args.id);
-      if (args.company !== undefined) app.company = args.company.trim();
-      if (args.role !== undefined) app.role = args.role.trim();
+      const company = args.company?.trim();
+      const role = args.role?.trim();
+      if (company === "" || role === "") throw new Error("Give a company and a role that are not blank.");
+      if (company !== undefined) app.company = company;
+      if (role !== undefined) app.role = role;
       if (args.deadline !== undefined) {
         const d = args.deadline.trim();
         app.deadline = d ? checkDeadline(d) : null;

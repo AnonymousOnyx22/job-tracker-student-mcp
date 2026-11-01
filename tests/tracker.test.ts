@@ -78,6 +78,13 @@ describe("add_application", () => {
     await expect(add({ company: "   ", role: "Analyst" })).rejects.toThrow(/are not blank/);
     await expect(add({ company: "", role: "Analyst" })).rejects.toThrow();
   });
+
+  it("rejects a blank company or role on update and keeps the old values", async () => {
+    await add({ company: "Acme", role: "Analyst" });
+    await expect(run(store, "update_application", { id: 1, company: "   " })).rejects.toThrow(/are not blank/);
+    await expect(run(store, "update_application", { id: 1, role: "  ", notes: "x" })).rejects.toThrow(/are not blank/);
+    expect(store.list()[0]).toMatchObject({ company: "Acme", role: "Analyst" });
+  });
 });
 
 describe("update_status", () => {
