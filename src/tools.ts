@@ -85,7 +85,7 @@ export const tools: ToolDef<Api>[] = [
         added: now,
         updated: now,
       };
-      if (!app.company || !app.role) throw new Error("Give a company and a role that are not blank.");
+      if (!app.company || !app.role) throw new Error(`Give a company and a role that are not blank. The ${app.company ? "role" : "company"} is blank.`);
       const twin = findTwin(apps, app);
       store.save([...apps, app]);
       const extra = [deadline ? `deadline ${deadline}` : null, app.source ? `from ${app.source}` : null].filter(Boolean).join(", ");
@@ -133,21 +133,29 @@ export const tools: ToolDef<Api>[] = [
         try {
           const company = get("company");
           const role = get("role");
-          if (!company || !role) throw new Error("Give a company and a role that are not blank.");
+          if (!company) throw new Error(`Row ${row}, column "company": the company is blank. Give a company name.`);
+          if (!role) throw new Error(`Row ${row}, column "role": the role is blank. Give a role title.`);
           const type = (get("type") ?? "job").toLowerCase();
-          if (!(TYPES as readonly string[]).includes(type)) throw new Error(`The type "${type}" is not valid. Use job or internship.`);
+          if (!(TYPES as readonly string[]).includes(type)) throw new Error(`Row ${row}, column "type": the type "${type}" is not valid. Use job or internship.`);
           const state = (get("status") ?? "applied").toLowerCase();
-          if (!(STATUSES as readonly string[]).includes(state)) throw new Error(`The status "${state}" is not valid. Use applied, interview, offer or rejected.`);
+          if (!(STATUSES as readonly string[]).includes(state)) throw new Error(`Row ${row}, column "status": the status "${state}" is not valid. Use applied, interview, offer or rejected.`);
           const deadline = get("deadline");
           const when = get("interview_date");
+          const inColumn = <T>(column: string, check: () => T): T => {
+            try {
+              return check();
+            } catch (err) {
+              throw new Error(`Row ${row}, column "${column}": ${err instanceof Error ? err.message : String(err)}`);
+            }
+          };
           const app: Application = {
             id: nextId,
             company,
             role,
             type: type as Application["type"],
             status: state as Status,
-            deadline: deadline ? checkDeadline(deadline) : null,
-            interview_date: when ? checkWhen(when) : null,
+            deadline: deadline ? inColumn("deadline", () => checkDeadline(deadline)) : null,
+            interview_date: when ? inColumn("interview_date", () => checkWhen(when)) : null,
             source: get("source"),
             notes: get("notes"),
             added: now,
@@ -165,7 +173,7 @@ export const tools: ToolDef<Api>[] = [
       if (added.length) store.save(all);
       const lines = [
         `Imported ${added.length} ${added.length === 1 ? "application" : "applications"}, skipped ${skipped.length}.`,
-        ...skipped.map((s) => `Skipped row ${s.row}: ${s.error}`),
+        ...skipped.map((s) => `Skipped: ${s.error}`),
         ...warnings.map((w) => `Warning: ${w}`),
       ];
       return { text: lines.join("\n"), structured: { imported: added.length, applications: added, skipped, warnings } };
